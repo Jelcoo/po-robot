@@ -19,13 +19,7 @@ basic.forever(function () {
     R2 = DFRobotMaqueenPlus.readPatrol(Patrol.R2)
     R3 = DFRobotMaqueenPlus.readPatrol(Patrol.R3)
 
-    /*if (!L1 && !L2 && L3 && !R1 && !R2 && !R3) {
-        DFRobotMaqueenPlus.mototStop(Motors.M1)
-        DFRobotMaqueenPlus.mototRun(Motors.M2, Dir.CW, 200)
-    } else if (!L1 && !L2 && !L3 && !R1 && !R2 && R3) {
-        DFRobotMaqueenPlus.mototStop(Motors.M2)
-        DFRobotMaqueenPlus.mototRun(Motors.M1, Dir.CW, 200)
-    } else */if (!R1 && L1 && L2) {
+    if (!R1 && L1 && L2) {
         DFRobotMaqueenPlus.mototStop(Motors.M1)
         DFRobotMaqueenPlus.mototRun(Motors.M2, Dir.CW, 100)
     } else if (R1 && R2 && !L1) {
