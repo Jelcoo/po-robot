@@ -1,27 +1,29 @@
-let running = false
-let searching = false
-let L1 = 0
-let L2 = 0
-let L3 = 0
-let R1 = 0
-let R2 = 0
-let R3 = 0
-let L1Gray = 0
-let R1Gray = 0
-let R3Gray = 0
-let L3Gray = 0
 input.onButtonPressed(Button.A, function () {
     running = false
-    searching = false
-})
-input.onButtonPressed(Button.B, function () {
-    running = true
     searching = false
 })
 input.onButtonPressed(Button.AB, function () {
     running = true
     searching = true
 })
+input.onButtonPressed(Button.B, function () {
+    running = true
+    searching = false
+})
+let L3Gray = 0
+let R3Gray = 0
+let L1Gray = 0
+let R1Gray = 0
+let R3 = 0
+let R2 = 0
+let R1 = 0
+let L3 = 0
+let L2 = 0
+let L1 = 0
+let searching = false
+let running = false
+DFRobotMaqueenPlus.I2CInit()
+radio.setFrequencyBand(88)
 basic.forever(function () {
     L1 = DFRobotMaqueenPlus.readPatrol(Patrol.L1)
     L2 = DFRobotMaqueenPlus.readPatrol(Patrol.L2)
@@ -65,6 +67,7 @@ basic.forever(function () {
     }
 })
 basic.forever(function () {
+    basic.clearScreen()
     if (searching) {
         DFRobotMaqueenPlus.setRGBLight(RGBLight.RGBA, Color.BLUE)
     } else if (running) {
@@ -73,4 +76,3 @@ basic.forever(function () {
         DFRobotMaqueenPlus.setRGBLight(RGBLight.RGBA, Color.RED)
     }
 })
-radio.setFrequencyBand(88)
