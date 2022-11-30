@@ -2,29 +2,32 @@ input.onButtonPressed(Button.A, function () {
     running = false
     searching = false
     found = false
+    locked = false
 })
 input.onButtonPressed(Button.AB, function () {
     running = true
     searching = true
     found = false
+    locked = false
 })
 input.onButtonPressed(Button.B, function () {
     running = true
     searching = false
+    found = false
+    locked = false
 })
+let sonic = 0
 let R3 = 0
 let R2 = 0
 let R1 = 0
 let L3 = 0
 let L2 = 0
 let L1 = 0
+let locked = false
+let found = false
 let searching = false
 let running = false
-let found = false;
-radio.setFrequencyBand(88)
-while (running && searching) {
-    search()
-}
+radio.setGroup(88)
 basic.forever(function () {
     L1 = DFRobotMaqueenPlus.readPatrol(Patrol.L1)
     L2 = DFRobotMaqueenPlus.readPatrol(Patrol.L2)
@@ -36,19 +39,24 @@ basic.forever(function () {
         DFRobotMaqueenPlus.mototStop(Motors.ALL)
         return
     }
-    if (searching) {
-        DFRobotMaqueenPlus.mototStop(Motors.ALL)
-    } else {
-        if (R3 && L3) {
+    if (!(searching)) {
+        if (L3 && R3 && (R1 || L1)) {
             radio.sendNumber(1)
         }
-        if (R3 && !(L3) && !(R2 || L2)) {
+        if (!(L1) && !(L2) && L3 && !(R1) && !(R2) && R3) {
+            running = true
+            searching = true
+            found = false
+            locked = false
+            return
+        }
+        if (R3 && !(L3) && !(R2 || L2) && (R1 && L1)) {
             radio.sendNumber(0)
             radio.sendNumber(2)
             basic.pause(300)
-            DFRobotMaqueenPlus.mototRun(Motors.M2, Dir.CCW, 75)
+            DFRobotMaqueenPlus.mototRun(Motors.M2, Dir.CCW, 50)
             DFRobotMaqueenPlus.mototRun(Motors.M1, Dir.CW, 75)
-            basic.pause(500)
+            basic.pause(400)
         } else if (!(R1) && L1 && L2) {
             DFRobotMaqueenPlus.mototStop(Motors.M1)
             DFRobotMaqueenPlus.mototRun(Motors.M2, Dir.CW, 60)
@@ -61,8 +69,9 @@ basic.forever(function () {
     }
 })
 basic.forever(function () {
-    basic.clearScreen()
-    if (searching) {
+    if (found) {
+        DFRobotMaqueenPlus.setRGBLight(RGBLight.RGBA, Color.YELLOW)
+    } else if (searching) {
         DFRobotMaqueenPlus.setRGBLight(RGBLight.RGBA, Color.BLUE)
     } else if (running) {
         DFRobotMaqueenPlus.setRGBLight(RGBLight.RGBA, Color.GREEN)
@@ -70,9 +79,31 @@ basic.forever(function () {
         DFRobotMaqueenPlus.setRGBLight(RGBLight.RGBA, Color.RED)
     }
 })
-function search() {
-    if (DFRobotMaqueenPlus.ultraSonic(PIN.P8, PIN.P12) < 30) {
-        found = true
-        DFRobotMaqueenPlus.mototRun(Motors.ALL, Dir.CW, 50)
+basic.forever(function () {
+    if (!(running)) {
+        return
     }
-}
+    if (!(searching)) {
+        return
+    }
+    if (found) {
+        return
+    }
+    sonic = DFRobotMaqueenPlus.ultraSonic(PIN.P8, PIN.P12)
+    if (sonic < 6) {
+        found = true
+        running = false
+        DFRobotMaqueenPlus.mototStop(Motors.ALL)
+    }
+    if (sonic < 20 && !(locked)) {
+        locked = true
+        basic.pause(50)
+        DFRobotMaqueenPlus.mototRun(Motors.ALL, Dir.CW, 50)
+    } else {
+        if (locked) {
+            return
+        }
+        DFRobotMaqueenPlus.mototRun(Motors.M1, Dir.CCW, 50)
+        DFRobotMaqueenPlus.mototRun(Motors.M2, Dir.CW, 50)
+    }
+})
