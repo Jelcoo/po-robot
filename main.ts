@@ -43,6 +43,9 @@ basic.forever(function () {
         if (L3 && R3 && (R1 || L1)) {
             radio.sendNumber(1)
         }
+        if (R3 && !(L3) && !(R2 || L2) && (R1 && L1)) {
+            radio.sendNumber(2)
+        }
         if (!(L1) && !(L2) && L3 && !(R1) && !(R2) && R3) {
             running = true
             searching = true
@@ -51,8 +54,6 @@ basic.forever(function () {
             return
         }
         if (R3 && !(L3) && !(R2 || L2) && (R1 && L1)) {
-            radio.sendNumber(0)
-            radio.sendNumber(2)
             basic.pause(300)
             DFRobotMaqueenPlus.mototRun(Motors.M2, Dir.CCW, 50)
             DFRobotMaqueenPlus.mototRun(Motors.M1, Dir.CW, 75)
@@ -94,9 +95,8 @@ basic.forever(function () {
         found = true
         running = false
         DFRobotMaqueenPlus.mototStop(Motors.ALL)
-        music.playMelody("C5 G B A F A C5 B ", 120)
-    }
-    if (sonic < 20 && !(locked)) {
+        music.playMelody("C5 G B A F A C5 B ", 60)
+    } else if (sonic < 20 && !(locked)) {
         locked = true
         basic.pause(50)
         DFRobotMaqueenPlus.mototRun(Motors.ALL, Dir.CW, 50)
