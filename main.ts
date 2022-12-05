@@ -95,10 +95,9 @@ basic.forever(function () {
         found = true
         running = false
         DFRobotMaqueenPlus.mototStop(Motors.ALL)
-        music.playMelody("C5 G B A F A C5 B ", 60)
+        music.playMelody("C5 G B A F A C5 B ", 120)
     } else if (sonic < 20 && !(locked)) {
         locked = true
-        basic.pause(50)
         DFRobotMaqueenPlus.mototRun(Motors.ALL, Dir.CW, 50)
     } else {
         if (locked) {
